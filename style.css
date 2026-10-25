@@ -1,3 +1,14 @@
+/* ============================================================
+   SeatFinder — responsive styles (HTML/CSS/vanilla JS only)
+   Same black/navy + yellow + green/red palette as before.
+   Breakpoints used:
+     small mobile:    up to 375px
+     standard mobile: 376–480px
+     tablet:          481–768px
+     laptop:          769–1024px
+     desktop:         1025px and above
+   ============================================================ */
+
 /* ================= BASE ================= */
 * { box-sizing: border-box; }
 
@@ -6,9 +17,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   background: #f1f5f9;
   color: #1e293b;
+  overflow-x: hidden; /* page itself never scrolls sideways */
 }
 
 .container {
+  width: 100%;
   max-width: 1080px;
   margin: 0 auto;
   padding: 0 16px 32px;
@@ -23,18 +36,19 @@ body {
 }
 
 .header-inner {
+  width: 100%;
   max-width: 1080px;
   margin: 0 auto;
   padding: 0 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
+  gap: 12px 16px;
   flex-wrap: wrap;
 }
 
-.header h1 { margin: 0; font-size: 32px; }
-.subtitle { margin: 4px 0 0; color: #cbd5e1; }
+.header h1 { margin: 0; font-size: clamp(24px, 6vw, 32px); }
+.subtitle { margin: 4px 0 0; color: #cbd5e1; font-size: clamp(13px, 3vw, 16px); }
 
 .badge {
   background: #facc15;
@@ -43,12 +57,14 @@ body {
   font-size: 13px;
   padding: 8px 14px;
   border-radius: 999px;
+  white-space: nowrap;
 }
 
 /* ================= DASHBOARD ================= */
+/* Mobile default: 2 columns. 4 columns from 700px up. */
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 24px;
 }
@@ -56,45 +72,67 @@ body {
 .stat-card {
   background: #fff;
   border-radius: 12px;
-  padding: 16px;
+  padding: 14px 10px;
   text-align: center;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   border-top: 5px solid #64748b;
+  min-width: 0;
 }
 
 .stat-green { border-top-color: #22c55e; }
 .stat-red { border-top-color: #ef4444; }
 .stat-gray { border-top-color: #9ca3af; }
 
-.stat-number { display: block; font-size: 30px; font-weight: bold; }
+.stat-number { display: block; font-size: clamp(24px, 7vw, 30px); font-weight: bold; }
 .stat-label { font-size: 13px; color: #64748b; }
 
 /* ================= MAIN LAYOUT ================= */
+/* Mobile/tablet default: stacked. Two columns from 900px up, so the
+   floor-plan column is always wide enough for the grid (see below). */
 .layout {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
+  grid-template-columns: 1fr;
   gap: 20px;
   align-items: start;
 }
 
+/* min-width: 0 lets grid children shrink below their content size instead
+   of forcing the page wider than the viewport. */
+.floor-section, .side-panel { min-width: 0; }
+
 .floor-section, .controls, .result, .howto {
   background: #fff;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .floor-section h2, .controls h2, .result h2, .howto h2 {
   margin-top: 0;
+  font-size: clamp(19px, 4vw, 22px);
 }
 
-.hint { color: #64748b; font-size: 14px; }
+.hint { color: #64748b; font-size: 14px; line-height: 1.5; }
 
 /* ================= FLOOR GRID ================= */
+/* The scroll container is the key mobile behaviour: instead of shrinking
+   cells until labels are unreadable, the grid keeps a 480px minimum width
+   (about 40px per cell) and scrolls sideways inside its own container.
+   On viewports wide enough for 480px, no scrolling happens. The page
+   itself never scrolls horizontally. */
+.floor-scroll {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
 .floor-grid {
   display: grid;
   grid-template-columns: repeat(11, 1fr);
   gap: 4px;
+  width: 100%;
+  min-width: 480px;
   max-width: 640px;
   margin: 0 auto;
 }
@@ -181,17 +219,20 @@ body {
 
 .controls select {
   width: 100%;
-  padding: 10px;
-  font-size: 15px;
+  min-height: 44px; /* touch-friendly */
+  padding: 10px 12px;
+  font-size: 16px;
   margin-bottom: 14px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
+  background: #fff;
 }
 
 .btn {
   width: 100%;
+  min-height: 44px; /* touch-friendly */
   padding: 12px;
-  font-size: 15px;
+  font-size: 16px;
   margin-bottom: 10px;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
@@ -210,6 +251,14 @@ body {
 .btn-primary:hover { background: #1e293b; }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
+/* Visible keyboard focus on every interactive control. */
+.btn:focus-visible,
+.controls select:focus-visible,
+.cell-table:focus-visible {
+  outline: 3px solid #3b82f6;
+  outline-offset: 2px;
+}
+
 .result-empty { color: #64748b; }
 .result-details p { margin: 8px 0; }
 .explanation { color: #334155; line-height: 1.5; }
@@ -219,11 +268,12 @@ body {
   border: 1px solid #facc15;
   border-radius: 8px;
   padding: 10px 12px;
+  line-height: 1.5;
 }
 
 /* ================= HOW BFS WORKS ================= */
 .howto { margin-top: 20px; }
-.howto ol { line-height: 1.7; }
+.howto ol { line-height: 1.7; padding-left: 22px; }
 .complexity {
   background: #eff6ff;
   border-left: 4px solid #3b82f6;
@@ -236,14 +286,37 @@ body {
   color: #64748b;
   font-size: 13px;
   margin-top: 24px;
+  line-height: 1.5;
 }
 
-/* ================= MOBILE ================= */
-@media (max-width: 768px) {
-  .dashboard { grid-template-columns: repeat(2, 1fr); }
-  .layout { grid-template-columns: 1fr; }
-  .header h1 { font-size: 26px; }
-  .cell { font-size: 10px; }
-  .cell small { font-size: 9px; }
-  .cell-entrance { font-size: 8px; }
+/* ================= SMALL MOBILE: up to 375px ================= */
+@media (max-width: 375px) {
+  .container, .header-inner { padding-left: 12px; padding-right: 12px; }
+  .header { padding: 14px 0; margin-bottom: 16px; }
+  .badge { font-size: 12px; padding: 6px 10px; }
+  .floor-section, .controls, .result, .howto { padding: 14px; }
+  .stat-card { padding: 12px 6px; }
+  .stat-label { font-size: 12px; }
+  .dashboard, .layout { gap: 14px; }
+}
+
+/* ================= TABLET AND UP: from 700px ================= */
+@media (min-width: 700px) {
+  .dashboard { grid-template-columns: repeat(4, 1fr); }
+  .floor-section, .controls, .result, .howto { padding: 20px; }
+  .stat-card { padding: 16px; }
+}
+
+/* ================= LAPTOP AND UP: from 900px ================= */
+/* Two-column layout returns here, once the floor-plan column is wide
+   enough (about 500px) for the grid without inner scrolling. */
+@media (min-width: 900px) {
+  .layout { grid-template-columns: 1.5fr 1fr; }
+}
+
+/* ================= REDUCED MOTION ================= */
+/* The pulsing selected-table glow stops; the JS search animation also
+   jumps straight to the final state (see runSearch in script.js). */
+@media (prefers-reduced-motion: reduce) {
+  .cell-selected { animation: none; }
 }

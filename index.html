@@ -47,10 +47,13 @@
       <!-- Floor plan -->
       <section class="floor-section">
         <h2>Restaurant Floor Plan</h2>
-        <p class="hint">Click a table to toggle it between available and occupied.</p>
+        <p class="hint">Click a table to toggle it between available and occupied. On small screens, scroll the floor plan sideways.</p>
 
-        <!-- The grid is built by script.js -->
-        <div id="floorGrid" class="floor-grid"></div>
+        <!-- The grid is built by script.js. The scroll container keeps cells
+             readable on phones instead of shrinking them to fit. -->
+        <div class="floor-scroll">
+          <div id="floorGrid" class="floor-grid"></div>
+        </div>
 
         <!-- Color legend -->
         <div class="legend">

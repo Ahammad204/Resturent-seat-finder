@@ -232,7 +232,11 @@ function runSearch() {
   document.getElementById("findBtn").disabled = true;
 
   const result = bfsFindTable(TABLES, partySize);
-  const stepDelay = result.visitedOrder.length > 60 ? 20 : 50;
+  // Respect reduced-motion preference: show the final state at once
+  // instead of the step-by-step animation. The BFS result is identical.
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const stepDelay = reducedMotion ? 0 : (result.visitedOrder.length > 60 ? 20 : 50);
+  const pathDelay = reducedMotion ? 0 : 90;
 
   // 1. Light up explored cells one by one (yellow).
   result.visitedOrder.forEach(function (cell, i) {
@@ -253,7 +257,7 @@ function runSearch() {
         el.classList.remove("cell-exploring");
         el.classList.add("cell-path");
       }
-    }, afterExplore + i * 90));
+    }, afterExplore + i * pathDelay));
   });
 
   // 3. Show the result.
@@ -277,7 +281,7 @@ function runSearch() {
         "Try a smaller party, free a table by clicking it, or restore the demo layout.");
     }
     document.getElementById("findBtn").disabled = false;
-  }, afterExplore + middlePath.length * 90));
+  }, afterExplore + middlePath.length * pathDelay));
 }
 
 // Restore the original demo statuses and clear the search.
